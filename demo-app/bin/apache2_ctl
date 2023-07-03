@@ -1,0 +1,8 @@
+#!/bin/bash
+
+#
+service apache2 start
+a2dissite 000-default.conf
+service apache2 reload
+a2ensite 80.conf
+service apache2 reload

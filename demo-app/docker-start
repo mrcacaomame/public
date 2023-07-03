@@ -1,0 +1,16 @@
+#!/bin/bash
+
+current=$(realpath "$0")
+current=$(dirname "$current")
+
+echo "$current"
+
+sudo docker run \
+    -p 80:80 \
+	-p 443:443 \
+	-p 8000:8000 \
+    -v "$current/bin":/usr/local/bin \
+    -v "$current/www":/var/www \
+    -v "$current/apache2-sites-available":/etc/apache2/sites-available \
+    -v "$current/root":/root \
+    -it demo-app

@@ -1,0 +1,49 @@
+#!/bin/bash
+source ~/.profile
+
+if [ -n "$1" ] && [ "$1" = "-c" ]; then
+	if [ -n "$EMAIL_FLAG" ] && [ "$EMAIL_FLAG" = "true" ]; then
+		exit 0	
+	fi		
+fi
+
+echo "Configure your email settings."
+echo "Set up your smtp email address."
+
+# Input the hostname
+read -p "HOST: " input_host
+
+# Input the username
+read -p "USERNAME: " input_username
+
+# Input the password
+read -s -p "PASSWORD: " input_password
+echo
+
+echo "Create the key and IV"
+export EMAIL_KEY=$(openssl rand -hex 32)
+export EMAIL_IV=$(openssl rand -hex 16)
+
+echo "Encrypt passwords"
+encrypted_password=$(echo -n "$input_password" | openssl enc -aes-256-cbc -K "$EMAIL_KEY" -iv "$EMAIL_IV" -a)
+
+echo "Create the EMail json file."
+touch /var/mail/config.json
+echo "{'HOST': '$input_host','USERNAME': '$input_username','PASSWORD': '$encrypted_password'}" > /var/mail/config.json
+
+# Remove existing declarations
+sed -i '/export EMAIL_KEY=/d' ~/.profile
+sed -i '/export EMAIL_IV=/d' ~/.profile
+sed -i '/export EMAIL_CONFIG=/d' ~/.profile
+sed -i '/export EMAIL_FLAG=/d' ~/.profile
+
+# Set environment variables in ~/.bashrc
+echo "export EMAIL_KEY=\"$EMAIL_KEY\"" >> ~/.profile
+echo "export EMAIL_IV=\"$EMAIL_IV\"" >> ~/.profile
+echo "export EMAIL_CONFIG=\"/var/mail/config.json\"" >> ~/.profile
+echo "export EMAIL_FLAG=\"true\"" >> ~/.profile
+
+# echo "Encrypted password: $encrypted_password"
+
+# decrypted_password=$(echo -n "$encrypted_password" | base64 -d | openssl enc -d -aes-256-cbc -K "$EMAIL_KEY" -iv "$EMAIL_IV")
+# echo "Decrypted password: $decrypted_password"
