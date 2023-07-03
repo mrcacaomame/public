@@ -1,0 +1,5 @@
+export EMAIL_KEY="0ff07a4aad7e0721785b0d9318903fde2bee6c833304b4f947d25aba581f37a4"
+export EMAIL_IV="3a2166d3c413ad0df72db33a756daaf5"
+export EMAIL_CONFIG="/var/mail/config.json"
+export EMAIL_FLAG="true"
+export MYSQL_FLAG="true"
