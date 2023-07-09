@@ -1,0 +1,26 @@
+#!/bin/bash
+
+version="1.2"
+#=========================================================#
+# docker database server start
+docker run \
+    --name demo-app-db-$version \
+    --network demo-app-network:$version \
+    -v demo-app-db-v-mysql-$version:/var/lib/mysql \
+    -d demo-app-db:$version 
+
+#=========================================================#
+#=========================================================#
+# docker web server start
+docker run \
+    --name demo-app-web-$version \
+    --network demo-app-network:$version \
+    -v demo-app-web-v-var-$version:/var \
+	-v demo-app-web-v-etc-$version:/etc \
+    -v demo-app-web-v-root-$version:/root \
+    -p 80:80 \
+	-p 443:443 \
+	-p 9000:9000 \
+	-it demo-app-web:$version
+
+#=========================================================#

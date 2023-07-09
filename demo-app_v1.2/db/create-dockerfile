@@ -1,0 +1,18 @@
+#!/bin/bash
+
+current=$(realpath "$0")
+current=$(dirname "$current")
+
+rm -rf $current/Dockerfile
+
+read -s -r -p "Input MySQL root password: " MYSQL_ROOT_PASSWORD
+echo
+
+touch Dockerfile
+
+echo "FROM mysql:latest" >> $current/Dockerfile
+echo "ENV MYSQL_ROOT_PASSWORD=\"$MYSQL_ROOT_PASSWORD\"" >> $current/Dockerfile
+echo "COPY sql/init.sql /docker-entrypoint-initdb.d/" >> $current/Dockerfile
+echo "EXPOSE 3306" >> $current/Dockerfile
+echo "RUN /bin/bash -c \"docker-entrypoint.sh mysqld & sleep 15 && while ! mysqladmin ping -h 127.0.0.1 -uroot -prootroot --silent; do sleep 1; done && mysql -uroot -prootroot < /docker-entrypoint-initdb.d/init.sql\"" >> $current/Docker
+echo "CMD [\"mysqld\"]" >> $current/Dockerfile

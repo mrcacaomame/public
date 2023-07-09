@@ -1,0 +1,88 @@
+#!/bin/bash
+#=========================================================#
+if [ -f "~/.bashrc" ]; then
+	source ~/.bashrc
+else
+	touch ~/.bashrc
+fi
+
+if [ -n "$1" ]; then
+    if [ "$1" = "-c" ] && [ "$EMAIL_FLAG" = "true" ]; then
+        exit 0;
+    fi
+fi
+
+#=========================================================#
+#=========================================================#
+# host
+
+#=========================================================#
+#=========================================================#
+read -r -p "Email host: " host
+read -r -p "Email username: " username
+read -s -r -p "Email password: " password
+echo
+
+#=========================================================#
+#=========================================================#
+enc=$(aes256_gcm_encrypt "$password")
+
+IFS=$'\n' read -r -d '' -a lines <<< "$enc"
+
+for line in "${lines[@]}"; do
+  stack=$(echo "$line" | grep -oP "(?<=^ENCRYPT_DATA=).*")
+  if [ -n "$stack" ]; then
+    encrypt_password="$stack"
+	continue
+  fi
+
+  stack=$(echo "$line" | grep -oP "(?<=^KEY=).*")
+  if [ -n "$stack" ]; then
+    key="$stack"
+	continue
+  fi
+
+  stack=$(echo "$line" | grep -oP "(?<=^IV=).*")
+  if [ -n "$stack" ]; then
+    iv="$stack"
+	continue
+  fi
+
+  stack=$(echo "$line" | grep -oP "(?<=^TAG=).*")
+  if [ -n "$stack" ]; then
+    tag="$stack"
+	continue
+  fi
+done
+#=========================================================#
+#=========================================================#
+config_dir="/var/config"
+email_config_file="email.json"
+
+if [ ! -d "$config_dir" ]; then
+    mkdir -p $config_dir
+fi
+if [ ! -f "$email_config_file" ]; then
+    touch $email_config_file
+fi
+
+echo "{\"KEY\":$key,\"IV\":$iv,\"TAG\":$tag}" > $config_dir/$email_config_file
+
+#=========================================================#
+#=========================================================#
+sed -i '/EMAIL_HOST=/d' /var/www/.env
+sed -i '/EMAIL_USERNAME=/d' /var/www/.env
+sed -i '/EMAIL_PASSWORD=/d' /var/www/.env
+
+#=========================================================#
+#=========================================================#
+echo "EMAIL_HOST=\"$host\"" >> /var/www/.env
+echo "EMAIL_USERNAME=\"$username\"" >> /var/www/.env
+echo "EMAIL_PASSWORD=$encrypt_password" >> /var/www/.env
+
+#=========================================================#
+#=========================================================#
+sed -i '/export EMAIL_FLAG=/d' ~/.bashrc
+echo "export EMAIL_FLAG=\"true\"" >> ~/.bashrc
+
+#=========================================================#

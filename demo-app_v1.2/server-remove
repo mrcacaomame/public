@@ -1,0 +1,62 @@
+#!/bin/bash
+
+currnt=$(realpath "$0")
+currnt=$(dirname "$currnt")
+
+echo "May I execute it?"
+read -p "(yes/no)" ans
+if [ "$ans" = "yes" ] || [ "$ans" = "y" ] || [ "$ans" = "YES" ] || [ "$ans" = "Y" ]; then
+    #=========================================================#
+    echo "Stop the container."
+    $currnt/server-stop > /dev/null
+    
+    #=========================================================#
+    #=========================================================#
+    # demo-app version 1.2
+    version="1.2"
+
+    #=========================================================#
+    #=========================================================#
+    # docker network remove
+    network="demo-app-network:$version"
+    
+    docker network rm $network
+    echo "Remove the network: $network"
+
+    #=========================================================#
+    # docker database remove
+    db="demo-app-db"
+
+    docker rmi $db:$version
+    echo "Remove the server: $db"
+    echo "$db version $version"
+
+    docker volume rm $db-v-mysql-$version
+    echo "Remove the volume: $db-v-mysql-$version"
+
+    #=========================================================#
+    #=========================================================#
+    # docker web remove
+    web="demo-app-web"
+
+    docker rmi $web:$version
+    echo "Remove the server: $web"
+    echo "$web version $version"
+
+    docker volume rm $web-v-var-$version
+    echo "Remove the volume: $web-v-var-$version"
+
+    docker volume rm $web-v-etc-$version
+    echo "Remove the volume: $web-v-etc-$version"
+
+    docker volume rm $web-v-root-$version
+    echo "Remove the volume: $web-v-root-$version"
+
+    #=========================================================#
+    echo "Docker server deletion succeeded."
+    #=========================================================#
+else
+    #=========================================================#
+    echo "The server was not remove."
+    #=========================================================#
+fi

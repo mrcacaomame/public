@@ -1,0 +1,7 @@
+RUN /bin/bash -c "docker-entrypoint.sh mysqld & sleep 15 && while ! mysqladmin ping -h 127.0.0.1 -uroot -prootroot --silent; do sleep 1; done && mysql -uroot -prootroot < /docker-entrypoint-initdb.d/init.sql"
+RUN /bin/bash -c "docker-entrypoint.sh mysqld & sleep 15 && while ! mysqladmin ping -h 127.0.0.1 -uroot -prootroot --silent; do sleep 1; done && mysql -uroot -prootroot < /docker-entrypoint-initdb.d/init.sql"
+RUN /bin/bash -c "docker-entrypoint.sh mysqld & sleep 15 && while ! mysqladmin ping -h 127.0.0.1 -uroot -prootroot --silent; do sleep 1; done && mysql -uroot -prootroot < /docker-entrypoint-initdb.d/init.sql"
+RUN /bin/bash -c "docker-entrypoint.sh mysqld & sleep 15 && while ! mysqladmin ping -h 127.0.0.1 -uroot -prootroot --silent; do sleep 1; done && mysql -uroot -prootroot < /docker-entrypoint-initdb.d/init.sql"
+RUN /bin/bash -c "docker-entrypoint.sh mysqld & sleep 15 && while ! mysqladmin ping -h 127.0.0.1 -uroot -prootroot --silent; do sleep 1; done && mysql -uroot -prootroot < /docker-entrypoint-initdb.d/init.sql"
+RUN /bin/bash -c "docker-entrypoint.sh mysqld & sleep 15 && while ! mysqladmin ping -h 127.0.0.1 -uroot -prootroot --silent; do sleep 1; done && mysql -uroot -prootroot < /docker-entrypoint-initdb.d/init.sql"
+RUN /bin/bash -c "docker-entrypoint.sh mysqld & sleep 15 && while ! mysqladmin ping -h 127.0.0.1 -uroot -prootroot --silent; do sleep 1; done && mysql -uroot -prootroot < /docker-entrypoint-initdb.d/init.sql"

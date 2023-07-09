@@ -1,0 +1,64 @@
+#!/bin/bash
+
+currnt=$(realpath "$0")
+currnt=$(dirname "$currnt")
+
+echo "May I execute it?"
+read -p "(yes/no)" ans
+if [ "$ans" = "yes" ] || [ "$ans" = "y" ] || [ "$ans" = "YES" ] || [ "$ans" = "Y" ]; then
+    #=========================================================#
+    # demo-app version 1.2
+    version="1.2"
+
+    #=========================================================#
+    #=========================================================#
+    # docker network create
+    network="demo-app-network:$version"
+    network_ver="1.0"
+
+    docker network create $network --label version=$network_ver
+    echo "Create the network: $network"
+    echo "Network version: $network_ver"
+
+    #=========================================================#
+    #=========================================================#
+    # docker database create
+    db="demo-app-db"
+
+    # Create the Dockerfile
+    $currnt/db/create-dockerfile
+
+    docker build -t $db:$version $currnt/db
+    echo "Create the server: $db"
+    echo "$db version $version"
+
+    docker volume create $db-v-mysql-$version
+    echo "Create the volume: $db-v-mysql-$version"
+
+    #=========================================================#
+    #=========================================================#
+    # docker web create
+    web="demo-app-web"
+
+    docker build -t $web:$version $currnt/web
+    echo "Create the server: $web"
+    echo "$web version $version"
+
+	docker volume create $web-v-etc-$version
+    echo "Create the volume: $web-v-etc-$version"
+
+    docker volume create $web-v-var-$version
+    echo "Create the volume: $web-v-var-$version"
+
+    docker volume create $web-v-root-$version
+    echo "Create the volume: $web-v-root-$version"
+
+    #=========================================================#
+    echo "Successfully built a Docker server."
+    echo "To start the server, please invoke the bash 'server-start'."
+    #=========================================================#
+else
+    #=========================================================#
+    echo "The server was not setup."
+    #=========================================================#
+fi
