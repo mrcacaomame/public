@@ -2,13 +2,40 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Listen for Xdebug",
+            "name": "Launch Built-in web server",
             "type": "php",
             "request": "launch",
-            "port": 9000,
-            "pathMappings": {
-                "/var/www": "${workspaceFolder}"
+            "runtimeArgs": [
+                "-dxdebug.mode=debug",
+                "-dxdebug.start_with_request=yes"
+            ],
+            "program": "${workspaceFolder}/artisan",
+            "args": [
+                "serve"
+            ],
+            "cwd": "${workspaceFolder}",
+            "port": 9003,
+            "externalConsole": false,
+            "internalConsoleOptions": "openOnSessionStart",
+            "serverReadyAction": {
+                "pattern": "Development Server \\(http://localhost:([0-9]+)\\) started",
+                "uriFormat": "http://localhost:%s",
+                "action": "openExternally"
             }
+        },
+        {
+            "name": "Launch Chrome",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:8000",
+            "webRoot": "${workspaceFolder}"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "デバッグ開始",
+            "configurations": ["Launch Built-in web server", "Launch Chrome"],
+            "stopAll": true
         }
     ]
 }
